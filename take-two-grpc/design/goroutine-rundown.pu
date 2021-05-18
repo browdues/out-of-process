@@ -1,0 +1,42 @@
+@startuml GoRoutineRunDown
+
+actor RunJobRequest
+
+participant g1_ConfigRunService
+
+box WorkerService
+participant g2_WorkerServiceRunRequest
+participant g4_WorkerServer
+end box
+
+participant g3_Executor
+
+
+RunJobRequest -> g1_ConfigRunService: ConfigRun(xmls)
+activate g1_ConfigRunService
+
+g1_ConfigRunService -> g2_WorkerServiceRunRequest: Run(xmls)
+activate g2_WorkerServiceRunRequest
+
+
+create g3_Executor
+g2_WorkerServiceRunRequest -> g3_Executor: Launch(uds, executorID)
+
+activate g2_WorkerServiceRunRequest
+g3_Executor --> g4_WorkerServer: RegisterExecutor(executorID)
+deactivate g2_WorkerServiceRunRequest
+
+g2_WorkerServiceRunRequest -> g3_Executor: SendRunCmd()
+activate g3_Executor
+
+
+
+g3_Executor --> g2_WorkerServiceRunRequest: SendResult()
+deactivate g3_Executor
+
+g2_WorkerServiceRunRequest --> g1_ConfigRunService: 
+deactivate g2_WorkerServiceRunRequest
+
+g1_ConfigRunService --> RunJobRequest
+deactivate g1_ConfigRunService
+@enduml

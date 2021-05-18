@@ -1,0 +1,14 @@
+@startuml Worker
+
+actor client
+
+client -> Worker: Run(w_xml, p_xml)
+Worker -> Executor: Launch()
+Executor --> Worker: Register(executorID)
+
+Worker --> Executor: Run(w_xml, p_xml)
+Executor -> Executor: Do Work
+Executor --> Worker: SendResult(executorID, workflow.result)
+
+Worker -> Worker:
+@enduml
